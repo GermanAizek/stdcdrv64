@@ -19,18 +19,18 @@ Driver stdcdrv64.sys allows diagnostic software to interact with system hardware
 
 Fixed vulnerabilities in opensource driver stdcdrv64.sys:
 
-- [ ] (LOLDrivers: stdcdrv64.sys)[https://www.loldrivers.io/drivers/f33c2e80-7b01-416b-821a-ed06db4b6511/]
+- [x] (LOLDrivers: stdcdrv64.sys)[https://www.loldrivers.io/drivers/f33c2e80-7b01-416b-821a-ed06db4b6511/]
   - Insufficient Access Control: Device object `\Device\stdcdrv64` opened with world-accessible DACL (fixed using `IoCreateDeviceSecure` with SDDL `D:P(A;;GA;;;SY)(A;;GA;;;BA)`)
 
 Fixed no publish vulnerabilities and bugs which contributors to this project found:
 
-- [ ] Device deletion bypassed on symbolic link deletion failure ([view code](main.c))
+- [x] Device deletion bypassed on symbolic link deletion failure ([view code](main.c))
 - [ ] Arbitrary Model-Specific Register (MSR) read and write in commands 0x222404, 0x22241C ([view code](msr.c))
 - [ ] Arbitrary physical memory read and write in commands 0x222408, 0x22240C ([view code](mem.c))
 - [ ] Arbitrary control register modification (CR0, CR3, CR4) in commands 0x222430, 0x222434 ([view code](mem.c))
 - [ ] Unfiltered write to critical x86 I/O ports and controllers in commands 0x222428, 0x22242C ([view code](io.c))
 - [ ] Unrestricted PCI configuration modification in commands 0x222420, 0x222424 ([view code](pci.c))
-- [ ] Device creation with weak permissions ([view code](main.c))
+- [x] Device creation with weak permissions ([view code](main.c))
 
 Authors:
 

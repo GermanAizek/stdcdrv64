@@ -1,5 +1,10 @@
 #include "stdcdrv64.h"
 
+// Device Class GUID for stdcdrv64
+static const GUID GUID_DEVCLASS_STDC = {
+    0x574F0FC8, 0x1AF4, 0x4B78, { 0x88, 0x2D, 0xAB, 0x62, 0x4F, 0xDD, 0x5E, 0x9F }
+};
+
 NTSTATUS StdcCreateClose(PDEVICE_OBJECT DeviceObject, PIRP Irp) {
     UNREFERENCED_PARAMETER(DeviceObject);
     Irp->IoStatus.Status = STATUS_SUCCESS;
@@ -178,7 +183,8 @@ VOID StdcUnload(PDRIVER_OBJECT DriverObject) {
     RtlInitUnicodeString(&symLink, STDC_DOS_DEVICE_NAME);
     IoDeleteSymbolicLink(&symLink);
 
-    if (DriverObject->DeviceObject) {
+    // FIX: Unconditionally delete device object to prevent resource leak on unload
+    if (DriverObject->DeviceObject != NULL) {
         IoDeleteDevice(DriverObject->DeviceObject);
     }
 
@@ -190,19 +196,25 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT DriverObject, PUNICODE_STRING RegistryPath) 
     NTSTATUS status;
     UNICODE_STRING devName;
     UNICODE_STRING symLink;
+    UNICODE_STRING sddl;
     PDEVICE_OBJECT devObj = NULL;
 
     RtlInitUnicodeString(&devName, STDC_DEVICE_NAME);
     RtlInitUnicodeString(&symLink, STDC_DOS_DEVICE_NAME);
 
-    // Initial vulnerable DriverEntry: IoCreateDevice with default DACL
-    status = IoCreateDevice(
+    // FIX: Restrict DACL to SYSTEM and Administrators (SDDL: D:P(A;;GA;;;SY)(A;;GA;;;BA))
+    // Prevents unprivileged users from sending raw hardware IOCTLs
+    RtlInitUnicodeString(&sddl, L"D:P(A;;GA;;;SY)(A;;GA;;;BA)");
+
+    status = IoCreateDeviceSecure(
         DriverObject,
         0,
         &devName,
         FILE_DEVICE_UNKNOWN,
-        0,
+        FILE_DEVICE_SECURE_OPEN,
         FALSE,
+        &sddl,
+        &GUID_DEVCLASS_STDC,
         &devObj
     );
 
@@ -212,7 +224,8 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT DriverObject, PUNICODE_STRING RegistryPath) 
 
     status = IoCreateSymbolicLink(&symLink, &devName);
     if (!NT_SUCCESS(status)) {
-        // Leaking devObj on failure
+        // FIX: Delete device object on symbolic link creation failure
+        IoDeleteDevice(devObj);
         return status;
     }
 

@@ -2,6 +2,32 @@
 #define _STDCDRV64_H_
 
 #include <ntddk.h>
+#include <wdmsec.h>
+
+#ifndef _MSC_VER
+#ifndef __try
+#define __try
+#define __except(x) if (0)
+#endif
+#endif
+
+//
+// IoCreateDeviceSecure prototype for MinGW DDK headers if not present
+//
+#ifndef IoCreateDeviceSecure
+NTSTATUS
+IoCreateDeviceSecure(
+    PDRIVER_OBJECT DriverObject,
+    ULONG DeviceExtensionSize,
+    PUNICODE_STRING DeviceName,
+    DEVICE_TYPE DeviceType,
+    ULONG DeviceCharacteristics,
+    BOOLEAN Exclusive,
+    PCUNICODE_STRING DefaultSDDLString,
+    LPCGUID DeviceClassGuid,
+    PDEVICE_OBJECT *DeviceObject
+);
+#endif
 
 #define STDC_DEVICE_NAME        L"\\Device\\stdcdrv64"
 #define STDC_DOS_DEVICE_NAME    L"\\DosDevices\\stdcdrv64"
