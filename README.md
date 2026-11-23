@@ -26,8 +26,8 @@ Fixed no publish vulnerabilities and bugs which contributors to this project fou
 
 - [x] Device deletion bypassed on symbolic link deletion failure ([view code](main.c))
 - [x] Arbitrary Model-Specific Register (MSR) read and write in commands 0x222404, 0x22241C ([view code](msr.c))
-- [ ] Arbitrary physical memory read and write in commands 0x222408, 0x22240C ([view code](mem.c))
-- [ ] Arbitrary control register modification (CR0, CR3, CR4) in commands 0x222430, 0x222434 ([view code](mem.c))
+- [x] Arbitrary physical memory read and write in commands 0x222408, 0x22240C ([view code](mem.c))
+- [x] Arbitrary control register modification (CR0, CR3, CR4) in commands 0x222430, 0x222434 ([view code](mem.c))
 - [ ] Unfiltered write to critical x86 I/O ports and controllers in commands 0x222428, 0x22242C ([view code](io.c))
 - [ ] Unrestricted PCI configuration modification in commands 0x222420, 0x222424 ([view code](pci.c))
 - [x] Device creation with weak permissions ([view code](main.c))
